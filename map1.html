@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./jquery.min.js"></script>
+    <script src="./echarts.min.js"></script>
+    <style>
+        #context-menu{
+            position: absolute;
+            background: #000;
+			cursor: pointer;
+			color: #fff;
+			font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chartmain" id="main" style="width: 1000px;height:600px;"></div>
+    <div id="context-menu">返回上一级</div>
+    <script>
+        $('#context-menu').hide()
+        // 省
+        var zhejiang = "js/zhejiang.json";
+        // 市
+        var hangzhou = "js/hangzhou.json";
+        var zhoushan = "js/zhoushan.json";
+        var jiaxing = "js/jiaxing.json";
+        var ningbo = "js/ningbo.json";
+        var taizhou = "js/taizhou.json";
+        var wenzhou = "js/wenzhou.json";
+        var lishui = "js/lishui.json";
+        var huzhou = "js/huzhou.json";
+        var quzhou = "js/quzhou.json";
+        var jinhua = "js/jinhua.json";
+        var shaoxing = "js/shaoxing.json";
+
+        // 杭州市各区
+        var yuhang = "js/yuhang.json";
+        var xihu = "js/xihu.json";
+        var shangcheng = "js/shangcheng.json";
+        var xiacheng = "js/xiacheng.json";
+        var binjiang = "js/binjiang.json";
+        var tonglu = "js/tonglu.json";
+        var fuyang = "js/fuyang.json";
+        var jiande = "js/jiande.json";
+        var xiaoshan = "js/xiaoshan.json";
+        var gongshu = "js/gongshu.json";
+        var linan = "js/linan.json";
+        var jianggan = "js/jianggan.json";
+        var chunan = "js/chunan.json";
+        var shengsi = 'js/shengsi.json';
+        var daishan = 'js/daishan.json';
+        var dinghai = 'js/daishan.json';
+
+        var putuo = "js/putuo.json";
+        var jiashan = "js/jiashan.json";
+        var xiuzhou = "js/xiuzhou.json";
+        var tongxiang = 'js/tongxiang.json';
+        var haining = 'js/haining.json';
+        var nanhu = 'js/nanhu.json';
+
+        var haiyan = "js/haiyan.json";
+        var pinghu = "js/pinghu.json";
+        var chixi = "js/chixi.json";
+        var yuyao = 'js/yuyao.json';
+        var zhenhai = 'js/zhenhai.json';
+        var jiangbei = 'js/jiangbei.json';
+        var haishu = "js/haishu.json";
+        var beilun = "js/beilun.json";
+        var yinzhou = "js/yinzhou.json";
+        var fenghua = 'js/fenghua.json';
+        var ninghai = 'js/ninghai.json';
+        var xiangshan = 'js/xiangshan.json';
+        var tiantai = "js/tiantai.json";
+        var xianju = "js/xianju.json";
+        var sanmen = "js/sanmen.json";
+        var linhai = 'js/linhai.json';
+        var huangyan = 'js/huangyan.json';
+        var jiaojiang = 'js/jiaojiang.json';
+        var luqiao = 'js/luqiao.json';
+        var wenling = 'js/wenling.json';
+        var yuhuan = 'js/yuhuan.json';
+
+        var yongjia = 'js/yongjia.json';
+        var leqing = 'js/leqing.json';
+        var lucheng = 'js/lucheng.json';
+        var ouhai = "js/ouhai.json";
+        var longwan = "js/longwan.json";
+        var dongtou = "js/dongtou.json";
+        var ruian = 'js/ruian.json';
+        var wencheng = 'js/wencheng.json';
+        var pingyang = 'js/pingyang.json';
+        var longgang = 'js/longgang.json';
+        var taishun = 'js/taishun.json';
+        var cangnan = 'js/cangnan.json';
+
+
+        var cityMap = {
+            '杭州市': hangzhou,
+            '舟山市': zhoushan,
+            '嘉兴市': jiaxing,
+            '宁波市': ningbo,
+            '台州市': taizhou,
+            '温州市': wenzhou,
+            '丽水市': lishui,
+            '湖州市': huzhou,
+            '衢州市': quzhou,
+            '金华市': jinhua,
+            '绍兴市': shaoxing
+        };
+        // 杭州下各区
+        var quyMap = {
+            '余杭区': yuhang,
+            '西湖区': xihu,
+            '上城区': shangcheng,
+            '下城区': xiacheng,
+            '滨江区': binjiang,
+            '桐庐县': tonglu,
+            '富阳区': fuyang,
+            '建德市': jiande,
+            '萧山区': xiaoshan,
+            '拱墅区': gongshu,
+            '临安区': linan,
+            '江干区': jianggan,
+            '淳安县': chunan,
+            // 舟山市各区
+            '嵊泗县':shengsi,
+            "岱山县":daishan,
+            "定海区":dinghai,
+            '普陀区':putuo,
+            // 嘉兴市各区
+            '嘉善县':jiashan,
+            '秀洲区':xiuzhou,
+            '桐乡市':tongxiang,
+            '海宁市':haining,
+            '南湖区':nanhu,
+            '海盐县':haiyan,
+            '平湖市':pinghu,
+            // 宁波市各区
+            '慈溪市':chixi,
+            '余姚市':yuyao,
+            '镇海区':zhenhai,
+            '江北区':jiangbei,
+            '海曙区':haishu,
+            '北仑区':beilun,
+            '鄞州区':yinzhou,
+            '奉化区':fenghua,
+            '宁海县':ninghai,
+            '象山县':xiangshan,
+            // 台州市各区
+            '天台县':tiantai,
+            '仙居县':xianju,
+            '三门县':sanmen,
+            '临海市':linhai,
+            '黄岩区':huangyan,
+            '椒江区':jiaojiang,
+            '路桥区':luqiao,
+            '温岭市':wenling,
+            '玉环市':yuhuan,
+            // 温州市各区
+            '永嘉县':yongjia,
+            '乐清市':leqing,
+            '鹿城区':lucheng,
+            '瓯海市':ouhai,
+            '龙湾区':longwan,
+            '洞头区':dongtou,
+            '瑞安市':ruian,
+            '文成县':wencheng,
+            '平阳县':pingyang,
+            '龙港市':longgang,
+            '泰顺县':taishun,
+            '苍南县':cangnan,
+        };
+        var myChartCity = echarts.init(document.getElementById('main'));
+		var mapStack = [];
+		var curMap = {}
+        // 初始化地图 mapUrl为城市的json数据
+        function loadMap(mapUrl,mapName,mapData){
+			$.getJSON(mapUrl,function(data){
+                // 注册地图
+				echarts.registerMap(mapName, data);
+				myChartCity.setOption({
+					tooltip: {
+						trigger: 'item',
+						// 鼠标悬浮时展示的信息
+						formatter: function loadData(result){
+							if(result.value){
+								return result.name+'<br />数据:'+result.value;
+							}else{
+								return result.name
+							}
+						} 
+					},
+					series: [{
+						type: 'map',
+						mapType: mapName ,//要和echarts.registerMap（）中第一个参数一致
+						selectedMode : 'multiple',
+						scaleLimit: { min: 0.8, max: 1.9 },//缩放
+						label: {
+							normal: {
+								show: true
+							},
+							emphasis: {
+								show: true
+							}
+						},
+						data : mapData,
+						label:{
+							show: true,
+							formatter: function (params) {
+								if(params.value){
+									return params.name+"\n"+ params.value;    //地图上展示文字 + 数值
+								}	
+							},             
+						}
+					}],
+					dataRange:{
+						splitList:[{start:5,end:19,color:'blue'},
+						{start:15,end:1000,color:'red'}]
+					}
+				})
+				// 存储当前地图信息
+				curMap = {
+                    mapUrl: mapUrl,
+                    mapName: mapName
+                 };    
+			})
+		}
+		var mapData = [{
+			name:'杭州市',value:'11'
+		},{
+			name:'金华市',value:'1000'
+		}]
+
+        // 获取浙江地图
+		loadMap('js/zhejiang.json','浙江',mapData)
+
+		// 点击地图触发事件
+		// myChartCity.on('click', function (result) {//回调函数，点击时触发，参数params格式参加官方API              	
+		// 	console.log(result)
+		// 	//选择地级市的单击事件
+		// 	var selectCity = result.name;  //湖州市
+		// 	var url = cityMap[selectCity]
+
+		// 	loadMap(url,selectCity)
+			
+		// 	// 选择区的单击事件
+		// 	var districtUrl =  quyMap[selectCity];
+		// 	loadMap(districtUrl,selectCity)
+
+		// 	// 将上一级地图信息压入mapStack,如果是最后一级则不压栈
+		// 	// if(result.name == ){
+
+		// 	// }
+		// 	mapStack.push({
+		// 		mapName:curMap.mapName,
+		// 		mapUrl:curMap.mapUrl
+		// 	})
+		// 	console.log(mapStack)
+		// })
+
+		// 选择市的点击事件，并绘制市级以下区的地图
+		myChartCity.on('mapselectchanged',function(result){
+			console.log(result)
+			var selectCity = result.batch[0].name;
+			var url = cityMap[selectCity]
+			console.log(url)
+			if(!url){
+				return
+			}else{
+				loadMap(url,selectCity)
+				mapStack.push({
+					mapName:curMap.mapName,
+					mapUrl:curMap.mapUrl
+				})
+			}
+		})
+
+		// 选择区的单击事件
+		myChartCity.on('mapselectchanged',function(result){
+			var selectCity = result.batch[0].name;
+			var districtUrl =  quyMap[selectCity];
+			if(!districtUrl || selectCity == mapStack[mapStack.length-1].mapName){
+				return
+			}else{
+				loadMap(districtUrl,selectCity)
+				mapStack.push({
+					mapName:curMap.mapName,
+					mapUrl:curMap.mapUrl
+				})
+			}
+		})
+
+		// 取消浏览器右键默认事件
+		document.oncontextmenu = function(){
+		　　return false;
+		}
+		myChartCity.on('contextmenu',function(params){
+			if(cityMap[params.name] !== undefined){
+				$('#context-menu').hide()
+			}else{
+				$('#context-menu').css({    
+					left: params.event.offsetX,
+					top: params.event.offsetY
+				}).show()
+			}
+			
+		})
+		// 鼠标移走后，'返回上一级'隐藏
+		$('#context-menu').on('mouseout',function(){
+			$('#context-menu').hide()
+		})
+		// 点击'返回上一级'重新加载地图
+		$('#context-menu').on('click',function(){
+			$(this).hide()
+			var map = mapStack.pop();  // 删除原数组最后一项，并返回删除元素的值
+			if (!mapStack.length && !map) {
+				alert('已经到达最上一级地图了');
+				return;
+			}
+			loadMap(map.mapUrl,map.mapName,mapData)			
+		})     
+    </script>
+</body>
+</html>
